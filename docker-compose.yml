@@ -1,0 +1,59 @@
+version: "3.7"
+
+services:
+  db_glpi:
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: glpi
+      MYSQL_USER: glpi
+      MYSQL_PASSWORD: glpipass
+    volumes:
+      - db_glpi_data:/var/lib/mysql
+
+  glpi:
+    image: diouxx/glpi
+    depends_on:
+      - db_glpi
+    ports:
+      - "8080:80"
+    environment:
+      - GLPI_DB_HOST=db_glpi
+      - GLPI_DB_USER=glpi
+      - GLPI_DB_PASSWORD=glpipass
+
+  db_nextcloud:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: ncadmin
+      POSTGRES_PASSWORD: ncpass
+    volumes:
+      - db_nextcloud_data:/var/lib/postgresql/data
+
+  nextcloud:
+    image: nextcloud
+    depends_on:
+      - db_nextcloud
+    ports:
+      - "8081:80"
+    environment:
+      - POSTGRES_HOST=db_nextcloud
+      - POSTGRES_USER=ncadmin
+      - POSTGRES_PASSWORD=ncpass
+      - POSTGRES_DB=nextcloud
+    volumes:
+      - nextcloud_data:/var/www/html
+
+  fdroid:
+    image: ngargaud/fdroid-server
+    ports:
+      - "8082:8000"
+    volumes:
+      - fdroid_data:/data
+
+volumes:
+  db_glpi_data:
+  db_nextcloud_data:
+  nextcloud_data:
+  fdroid_data:
