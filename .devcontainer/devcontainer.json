@@ -1,0 +1,6 @@
+{
+  "name": "MDM-MAM-MIM Lab",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "forwardPorts": [8080, 8081, 8082],
+  "postCreateCommand": "echo 'Entorno listo. Ejecuta: docker-compose up -d'"
+}
